@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Which Chess Legend?</title>
+  <meta name="description" content="Play one game against a random-strength bot and find out which famous chess player your style resembles.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=DM+Sans:wght@400;500;700&family=Noto+Sans+Symbols+2&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <button class="brand" data-go="intro" aria-label="Back to start"><span class="brand-glyph">♞</span> Which Chess Legend?</button>
+    <nav class="topnav">
+      <button class="navlink" data-go="about">About</button>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">◐</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- INTRO -->
+    <section class="screen active" id="screen-intro">
+      <div class="hero">
+        <p class="eyebrow">A personality test played on 64 squares</p>
+        <h1>Which chess legend is hiding in your&nbsp;moves?</h1>
+        <p class="lede">Play one game against a bot of random strength. We look at how you attack, how much you sacrifice, how you use the clock and which opening you choose, then match you with Tal, Fischer, Carlsen and 21 other legends, along with each one's cigarettes, yogurts and wristwatches.</p>
+        <div class="hero-meta"><span>♟ 1 game</span><span>⏱ 2–30 min</span><span>👑 24 legends</span></div>
+        <button class="btn btn-primary btn-lg" data-go="setup">Take the test →</button>
+        <p class="fineprint">Just for fun. Your result is a vibe, not a FIDE rating.</p>
+      </div>
+      <div class="hero-board" aria-hidden="true" id="heroBoard"></div>
+    </section>
+
+    <!-- SETUP -->
+    <section class="screen" id="screen-setup">
+      <div class="setup">
+        <div class="step">
+          <span class="step-num">1</span>
+          <h2>Pick your pace</h2>
+          <p class="step-sub">The time control you choose counts as part of your style.</p>
+          <div class="choice-grid" id="tcChoices"></div>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <h2>Pick your colour</h2>
+          <div class="choice-row" id="colorChoices">
+            <button class="chip" data-color="w"><span class="pc w">♚</span> White</button>
+            <button class="chip selected" data-color="r">🎲 Random</button>
+            <button class="chip" data-color="b"><span class="pc b">♚</span> Black</button>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <h2>Meet your opponent</h2>
+          <div class="opponent-card" id="opponentCard"></div>
+          <div class="choice-row">
+            <button class="chip" id="rerollBtn">🎲 Re-roll opponent</button>
+            <label class="elo-pick"><span>…or set the ELO</span>
+              <input type="range" id="eloSlider" min="400" max="2600" step="50" value="1200">
+            </label>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-lg" id="startGameBtn">Start the game →</button>
+      </div>
+    </section>
+
+    <!-- GAME -->
+    <section class="screen" id="screen-game">
+      <div class="game">
+        <div class="board-col">
+          <div class="player-bar" id="botBar">
+            <div class="avatar" id="botAvatar"></div>
+            <div class="pinfo"><strong id="botName"></strong><span id="botElo"></span></div>
+            <div class="captured" id="botCaptured"></div>
+            <div class="clock" id="botClock">--:--</div>
+          </div>
+          <div class="speech" id="botSpeech" hidden></div>
+          <div class="board-wrap">
+            <div class="board" id="board" role="grid" aria-label="Chess board"></div>
+            <div class="promo" id="promo" hidden></div>
+          </div>
+          <div class="player-bar" id="userBar">
+            <div class="avatar you">You</div>
+            <div class="pinfo"><strong>You</strong><span id="userColorLabel"></span></div>
+            <div class="captured" id="userCaptured"></div>
+            <div class="clock" id="userClock">--:--</div>
+          </div>
+        </div>
+        <aside class="side-col">
+          <div class="status" id="status">Your move</div>
+          <div class="pace-live" id="paceLive"></div>
+          <ol class="movelist" id="moveList"></ol>
+          <div class="game-actions">
+            <button class="btn" id="drawBtn">½ Offer draw</button>
+            <button class="btn" id="resignBtn">🏳 Resign</button>
+            <button class="btn" id="flipBtn" title="Flip board">⇅</button>
+          </div>
+          <div class="endcard" id="endCard" hidden>
+            <h3 id="endTitle"></h3>
+            <p id="endText"></p>
+            <button class="btn btn-primary" id="revealBtn">Reveal my legend →</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ANALYSING -->
+    <section class="screen" id="screen-analyse">
+      <div class="analysing">
+        <div class="spinner-piece">♞</div>
+        <h2 id="analyseMsg">Consulting the ghosts of Reykjavík…</h2>
+        <div class="progress"><div class="bar" id="analyseBar"></div></div>
+        <p class="fineprint" id="analyseSub">Reviewing your moves</p>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section class="screen" id="screen-results">
+      <div class="results" id="results"></div>
+    </section>
+    <!-- ABOUT -->
+    <section class="screen" id="screen-about">
+      <article class="about">
+        <button class="btn back-btn" data-go="back">← Back</button>
+        <p class="eyebrow">About</p>
+        <h1>Which Chess Legend?</h1>
+        <p class="lede">A light-hearted experiment in finding links between character, pace, narrative and chess paraphernalia. You play one game, and the app reads your style from your moves and your clock. It then matches you with a legend, a famous game, and a rhythm.</p>
+        <div class="credit">
+          <span class="credit-glyph">♞</span>
+          <div>
+            <strong>Created by Santiago Renteria with Claude Code.</strong>
+            <span>More experiments at <a href="https://www.renterialab.com" target="_blank" rel="noopener">www.renterialab.com</a></span>
+          </div>
+        </div>
+
+        <h2>How it works</h2>
+        <ul class="about-list">
+          <li><strong>The bot</strong> is a small chess engine written for this project, using alpha-beta search with quiescence. Its random ELO sets how deep it searches, how much randomness it adds, and how often it blunders on purpose.</li>
+          <li><strong>Your style</strong> is scored on 15 traits taken from the game: aggression, sacrifices, accuracy, thinking speed, the pace you chose, castling, king walks, early queen moves, pawn storms, trades, game length, opening theory, knights versus bishops, chaos and time trouble.</li>
+          <li><strong>The legends</strong> each have a hand-tuned style profile, plus bonuses for well-known quirks (the Bongcloud, the Fischer clock, Bronstein's long first-move thinks).</li>
+          <li><strong>The closest famous game</strong> compares your opening moves, style, result and length with 14 historical games.</li>
+          <li><strong>The rhythmogram</strong> treats your moves as beats in time and shows how they cluster at every time scale.</li>
+        </ul>
+
+        <h2>Attributions</h2>
+        <ul class="about-list">
+          <li>Inspired by the personality tests at <a href="https://knowsoda.com/tests" target="_blank" rel="noopener">knowsoda.com/tests</a>.</li>
+          <li>Move rules and notation: <a href="https://github.com/jhlywa/chess.js" target="_blank" rel="noopener">chess.js</a> v0.10.3 by Jeff Hlywa, BSD 2-Clause License.</li>
+          <li>Engine piece-square tables come from Tomasz Michniewski's <a href="https://www.chessprogramming.org/Simplified_Evaluation_Function" target="_blank" rel="noopener">Simplified Evaluation Function</a> (Chess Programming Wiki).</li>
+          <li>The move-accuracy formula is adapted from the public method used by <a href="https://lichess.org/page/accuracy" target="_blank" rel="noopener">Lichess</a>.</li>
+          <li>The rhythmogram is based on Neil P. M. Todd's multiscale rhythmogram model of rhythm perception (1994).</li>
+          <li>Fonts: <a href="https://fonts.google.com/specimen/Fraunces" target="_blank" rel="noopener">Fraunces</a>, <a href="https://fonts.google.com/specimen/DM+Sans" target="_blank" rel="noopener">DM Sans</a> and <a href="https://fonts.google.com/noto/specimen/Noto+Sans+Symbols+2" target="_blank" rel="noopener">Noto Sans Symbols 2</a> via Google Fonts, all under the SIL Open Font License. The pieces are Unicode chess symbols.</li>
+          <li>The famous games are historical game scores in the public domain. The anecdotes (cigarettes, yogurt, wristwatches, cats) are widely retold chess history and folklore, and some of them are more legend than fact.</li>
+          <li>Players are named for educational and entertainment purposes. They are not affiliated with this project and have not endorsed it.</li>
+        </ul>
+        <p class="fineprint">Built with <a href="https://claude.com/claude-code" target="_blank" rel="noopener">Claude Code</a> by Anthropic. Everything runs in your browser, and no data leaves your device.</p>
+      </article>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Created by Santiago Renteria with Claude Code · <a href="https://www.renterialab.com" target="_blank" rel="noopener">renterialab.com</a></span>
+    <button class="navlink" data-go="about">About &amp; attributions</button>
+  </footer>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+  <script>window.Chess || document.write('<script src="vendor/chess.min.js"><\/script>')</script>
+  <script src="js/engine.js"></script>
+  <script src="js/players.js"></script>
+  <script src="js/games.js"></script>
+  <script src="js/analysis.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
