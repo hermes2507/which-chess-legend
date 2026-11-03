@@ -1,6 +1,6 @@
 # Third-party notices
 
-This project's own code and content are licensed under CC BY 4.0 (see `LICENSE`). The components below are **not** covered by that license and keep their own terms.
+This project's own code and content are licensed under the MIT License (see `LICENSE`). The components below are **not** covered by that license and keep their own terms.
 
 ## chess.js 0.10.3
 
