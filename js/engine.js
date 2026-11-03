@@ -333,7 +333,10 @@
   }
 
   /* Root search.
-     opts: { depth, timeMs, exact (full window per root move -> true scores), history: Set of boardKeys }
+     opts: { depth, timeMs, exact (full window per root move -> true scores),
+             margin (cp: every move within `margin` of the best gets a true score; the rest are
+                     upper bounds already more than `margin` below the best),
+             history: Set of boardKeys }
      returns { scores: [{m, uci, score, capture, check}], best, depthReached, nodes } */
   function rootSearch(fen, opts) {
     const pos = fromFEN(fen);
@@ -341,6 +344,7 @@
     S.nodes = 0; S.stop = false; S.killers = [];
     S.deadline = now() + (opts.timeMs || 1000);
     const history = opts.history || null;
+    const margin = opts.margin || 0;
     let root = legalMoves(pos).map((m) => {
       const capture = !!pos.b[mTo(m)] || mFlag(m) === 2;
       make(pos, m);
@@ -361,7 +365,7 @@
         let sc;
         if (r.rep) sc = 0;
         else if (opts.exact) sc = -search(pos, d - 1, -INF, INF, 1);
-        else sc = -search(pos, d - 1, -INF, -alpha, 1);
+        else sc = -search(pos, d - 1, -INF, -(alpha - margin), 1);
         unmake(pos, r.m);
         if (S.stop) break;
         cur.push({ ...r, score: sc });
@@ -382,10 +386,15 @@
 
   /* Bot move choice with skill parameters:
      level = { depth, timeMs, noise, blunder, aggression } */
+  const CAPTURE_BONUS = 12, CHECK_BONUS = 15;
   function chooseMove(fen, level, history) {
+    // Without exact scores, non-best root moves only carry upper bounds. Adding a style bonus to a
+    // bound can make a move that really drops the queen look better than the best move, so we widen
+    // the root window by the largest bonus: every move that could win with its bonus gets a true score.
+    const maxBonus = (CAPTURE_BONUS + CHECK_BONUS) * (level.aggression || 0);
     const res = rootSearch(fen, {
       depth: level.depth, timeMs: level.timeMs, exact: level.noise > 0,
-      history, shuffle: true,
+      margin: Math.ceil(maxBonus) + 1, history, shuffle: true,
     });
     if (!res.scores.length) return null;
     const list = res.scores;
@@ -398,7 +407,7 @@
     let best = null, bestVal = -Infinity;
     for (const x of list) {
       let v = x.score + (Math.random() * 2 - 1) * (level.noise || 0);
-      if (level.aggression) v += (x.capture ? 12 : 0) * level.aggression + (x.check ? 15 : 0) * level.aggression;
+      if (level.aggression) v += ((x.capture ? CAPTURE_BONUS : 0) + (x.check ? CHECK_BONUS : 0)) * level.aggression;
       if (x.score > MATE - 1000) v += 1e6; // never miss a found mate
       if (v > bestVal) { bestVal = v; best = x; }
     }
