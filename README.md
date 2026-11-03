@@ -90,6 +90,16 @@ docs/                 Documentation and screenshots
 
 See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for details.
 
+## License
+
+© 2026 Santiago Renteria. This project is licensed under **[Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/)**. See [`LICENSE`](LICENSE).
+
+You may share, modify and build on it, including commercially, as long as you **give credit**. A suitable attribution:
+
+> "Which Chess Legend?" by Santiago Renteria ([renterialab.com](https://www.renterialab.com)), made with Claude Code. Licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Source: [github.com/hermes2507/which-chess-legend](https://github.com/hermes2507/which-chess-legend). If you changed it, say so.
+
+The license covers this project's own code, text and images only. Third-party components keep their own licenses: chess.js (BSD 2-Clause) and the Google Fonts (SIL OFL). See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
 ---
 
 *Made by Santiago Renteria with Claude Code · [renterialab.com](https://www.renterialab.com)*

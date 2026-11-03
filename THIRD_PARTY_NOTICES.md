@@ -1,5 +1,7 @@
 # Third-party notices
 
+This project's own code and content are licensed under CC BY 4.0 (see `LICENSE`). The components below are **not** covered by that license and keep their own terms.
+
 ## chess.js 0.10.3
 
 Used for move legality, SAN notation and game-over detection. Loaded from cdnjs, with a copy in `vendor/chess.min.js` as an offline fallback.
