@@ -4,6 +4,8 @@
 
 It isn't meant to be serious. It's an experiment in finding links between **character, game pace, narrative and chess paraphernalia**: Tal's cigarettes, Karpov's yogurt, Kasparov's wristwatch, Alekhine's cat.
 
+### ▶ [Play it now: hermes2507.github.io/which-chess-legend](https://hermes2507.github.io/which-chess-legend/)
+
 > Created by **Santiago Renteria** with [Claude Code](https://claude.com/claude-code) · [www.renterialab.com](https://www.renterialab.com)
 
 ![Intro screen](docs/screenshots/intro.png)
@@ -41,7 +43,7 @@ It isn't meant to be serious. It's an experiment in finding links between **char
 
 ## Quick start
 
-It's a static site: no build step and no dependencies to install.
+The easiest way is to **[play it online](https://hermes2507.github.io/which-chess-legend/)** (GitHub Pages). To run it yourself: it's a static site with no build step and no dependencies to install.
 
 ```bash
 git clone https://github.com/hermes2507/which-chess-legend.git
