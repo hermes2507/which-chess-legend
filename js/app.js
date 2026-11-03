@@ -78,6 +78,7 @@
   // ---------------- helpers ----------------
   function go(name) {
     $$('.screen').forEach((s) => s.classList.toggle('active', s.id === 'screen-' + name));
+    document.body.classList.toggle('playing', name === 'game');
     window.scrollTo(0, 0);
   }
   function toast(msg) {
@@ -312,6 +313,13 @@
   // ----- input: click & drag -----
   let drag = null;
   const boardEl = $('#board');
+  // iOS/Android: stop the browser from treating board taps/drags as zoom or scroll gestures.
+  // Pointer events still fire, so click-to-move and drag-to-move keep working.
+  for (const el of [boardEl]) {
+    for (const type of ['touchstart', 'touchmove', 'gesturestart', 'gesturechange', 'dblclick']) {
+      el.addEventListener(type, (e) => { if (e.cancelable) e.preventDefault(); }, { passive: false });
+    }
+  }
   boardEl.addEventListener('pointerdown', (e) => {
     if (S.gameOver || S.chess.turn() !== S.userColor) return;
     const sqEl = e.target.closest('.sq'); if (!sqEl) return;
